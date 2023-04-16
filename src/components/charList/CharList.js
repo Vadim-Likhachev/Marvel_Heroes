@@ -6,7 +6,7 @@ import Error from '../error/error';
 
 import './charList.scss';
 
-class CharList  extends Component {
+class CharList extends Component {
 
     state = {
         chars: [],
@@ -34,12 +34,34 @@ class CharList  extends Component {
         })
     }
 
+    onRenderChars(chars) {
+        const charList = chars.map((char) => {
+            const imgStyle = char.thumbnail.includes('image_not_available') ? {'objectFit' : 'fill'} : {'objectFit' : 'cover'};
+                        
+            return (
+                <li className="char__item"
+                    key={char.id}                 
+                    onClick={() => this.props.onCharSelected(char.id)}>
+                      <img src={char.thumbnail} alt={char.name} style={imgStyle}/>
+                      <div className="char__name">{char.name}</div>
+                </li>
+            )
+        })
+        
+        return (
+            <ul className="char__grid">
+                {charList}
+            </ul>
+        )
+    }
+
     render() {
         const {chars, loading, error} = this.state;
+        const viewChars = this.onRenderChars(chars)
 
         const spinner = loading ? <div className='randomchar__spinner'><SpinnerCircular style={{margin: 'auto'}} size={200} color={'#9F0013'}/></div> : null;
         const errorMessage = error ? <Error/> : null;
-        const content = !(spinner || errorMessage) ? <View chars={chars}/> : null;
+        const content = !(spinner || errorMessage) ? viewChars : null;
         
         return (
             <div className="char__list">
@@ -56,21 +78,4 @@ class CharList  extends Component {
 
 }
 
-const View = ({chars}) => {
-
-    return (
-        <ul className="char__grid">
-            {
-                chars.map((char, index) => {
-                    return (
-                        <li key={index} className="char__item">
-                            <img src={char.thumbnail} alt={char.name}/>
-                            <div className="char__name">{char.name}</div>
-                        </li>
-                    )
-                })
-            }
-        </ul>
-    )
-}
 export default CharList;
