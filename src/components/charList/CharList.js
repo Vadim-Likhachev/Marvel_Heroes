@@ -14,14 +14,29 @@ class CharList extends Component {
         loading: true,
         error: false,
         newCharLoading: false,
-        offset: 1550,
+        offset: 210,
         charEnded: false
+    }
+
+    refItems = []
+
+    addRefItems = (elem) => {
+        this.refItems.push(elem)
     }
 
     marvelService = new MarvelService();
 
     componentDidMount() {
         this.updateChars();
+    }
+
+    focusItem = (event) => {       
+        if (this.refItems) {
+            this.refItems.forEach(item => {
+                item.className = item === event.target ? 'char__item char__item_selected' : 'char__item'
+            })
+        }
+       
     }
 
     updateChars = (offset) => {
@@ -58,7 +73,10 @@ class CharList extends Component {
                         
             return (
                 <li className="char__item"
-                    key={char.id}                 
+                    ref={this.addRefItems}
+                    key={char.id}
+                    tabIndex={0}
+                    onFocus={this.focusItem}                 
                     onClick={() => this.props.onCharSelected(char.id)}>
                       <img src={char.thumbnail} alt={char.name} style={imgStyle}/>
                       <div className="char__name">{char.name}</div>
